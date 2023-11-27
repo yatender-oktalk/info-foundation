@@ -1,2 +1,13 @@
 BeautifulSoup4~=4.12.2
 requests~=2.31.0
+requests-html==0.10.0
+scrapy==2.5.0
+selenium
+webdriver_manager
+google-api-python-client
+bs4
+pandas
+numpy
+matplotlib
+seaborn
+plotly
