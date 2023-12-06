@@ -29,7 +29,7 @@ print(website)
 start_time = datetime.now()
 print('Crawl starting time : {}' .format(start_time.time()))
 print()
-
+jobs = []
 def generate_url(index):
     if index == 1:
         return "https://www.naukri.com/data-scientist-machine-learning-deep-learning-jobs-in-india"
@@ -66,60 +66,92 @@ def extract_rating(rating_a):
     else:
         return rating_a.find('span', class_="main-2").text
 
-def parse_job_data_from_soup(page_jobs):
-    # print(page_jobs)
-    for job in page_jobs:
-        row1 = job.find('div', class_="row1")
-        row2 = job.find('div', class_="row2")
-        row3 = job.find('div', class_="row3")
-        row4 = job.find('div', class_="row4")
-        row5 = job.find('div', class_="row5")
-        row6 = job.find('div', class_="row6")
-        print("*************START***************")
-        job_title = row1.a.text
-        # print(row2.prettify())
-        company_name = row2.span.a.text
-        rating_a = row2.span
-        rating = extract_rating(rating_a)
+def parse_job_data_from_soup(soup):
+    # print("*******page_jobs*********")
+    
+    for u in soup:
+        try: 
+            # print("*************START***************")
+
+            job = BeautifulSoup(str(u), 'html.parser')
+
+            row1 = job.find('div', class_="row1")
+            row2 = job.find('div', class_="row2")
+            row3 = job.find('div', class_="row3")
+            row4 = job.find('div', class_="row4")
+            row5 = job.find('ul', class_="tags-gt")
+            row6 = job.find('div', class_="row6")
+            # print("job:", job)
+            job_title = row1.a.text
+            # print(row2.prettify())
+            company_name = row2.span.a.text
+            rating_a = row2.span
+            rating = extract_rating(rating_a)
+
+            job_details = row3.find('div', class_="job-details")
+            ex_wrap = job_details.find('span', class_="exp-wrap").span.span.text
+            location = job_details.find('span', class_="loc-wrap ver-line").span.span.text
+
+            min_requirements = row4.span.text
+            # print(row5)
+            all_tech_stack = []
+            for tech_stack in row5.find_all('li', class_="dot-gt"):
+                tech_stack = tech_stack.text
+                
+                all_tech_stack.append(tech_stack)
+                
+            all_tech = ",".join(all_tech_stack)
+            # print(all_tech_stack)
+            # print("Job Title : {}" .format(job_title))
+            # print("Company Name : {}" .format(company_name))
+            # print("Rating : {}" .format(rating))
+            # print("Experience : {}" .format(ex_wrap))
+            # print("Location : {}" .format(location))
+            # print("Minimum Requirements : {}" .format(min_requirements))
+            # print("All Tech Stack : {}" .format(all_tech_stack))
+            # print("Job Title : {}" .format(job_title))
+
+            jobs.append({
+                "Job Title": job_title,
+                "Company Name": company_name,
+                "Rating": rating,
+                "Experience": ex_wrap,
+                "Location": location,
+                "Minimum Requirements": min_requirements,
+                "Tech Stack": all_tech
+            })
+
+        except:
+            pass
+
+        # print("***************END***************")
         
-        job_details = row3.find('div', class_="job-details")
-        ex_wrap = job_details.find('span', class_="exp-wrap").span.span.text
-        location = job_details.find('span', class_="loc-wrap ver-line").span.span.text
-
-        min_requirements = row4.span.text
-
-        all_tech_stack = []
-        for tech_stack in row5.ul.find_all('li', class_="dot-gt tag-li "):
-            tech_stack = tech_stack.text
-            all_tech_stack.append(tech_stack)
-
-        print("Job Title : {}" .format(job_title))
-        print("Company Name : {}" .format(company_name))
-        print("Rating : {}" .format(rating))
-        print("Experience : {}" .format(ex_wrap))
-        print("Location : {}" .format(location))
-        print("Minimum Requirements : {}" .format(min_requirements))
-        print("All Tech Stack : {}" .format(all_tech_stack))
-
-        print("***************END***************")
-        
-options = webdriver.ChromeOptions() 
-options.headless = True 
-driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
-for i in range(72,420):
-    print(i)
-    url = generate_url(i)
-    driver.get(url)
-    sleep(randint(5, 10))
-    get_url = driver.current_url
-    if get_url == url:
-        page_source = driver.page_source
-
-    soup = BeautifulSoup(page_source, 'html.parser')
-    page_jobs = soup.find_all('div', class_="srp-jobtuple-wrapper")
-    write_file(i, page_jobs)
-
+# options = webdriver.ChromeOptions() 
+# options.headless = True 
+# driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 for i in range(1, 420):
-    parse_job_data_from_soup()
+    file = open(f"/Users/ysingh/codebase/yatender-oktalk/arizona-ml/info-foundation/jobs/india/machine_learning_engineer/page-{i}.txt", "r")
+    soup = BeautifulSoup(file.read(), 'html.parser')
+    
+    parse_job_data_from_soup(soup)
+
+df = pd.DataFrame(jobs)
+print(df)
+df.to_csv("jobs/machine_learning_engineer.csv", sep='\t')
+# for i in range(72,420):
+#     print(i)
+#     url = generate_url(i)
+#     driver.get(url)
+#     sleep(randint(5, 10))
+#     get_url = driver.current_url
+#     if get_url == url:
+#         page_source = driver.page_source
+
+#     soup = BeautifulSoup(page_source, 'html.parser')
+#     page_jobs = soup.find_all('div', class_="srp-jobtuple-wrapper")
+#     write_file(i, page_jobs)
+
+
+# for i in range(1, 420):
+#     parse_job_data_from_soup()

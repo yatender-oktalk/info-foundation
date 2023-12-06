@@ -42,11 +42,11 @@ if __name__ == '__main__':
         return movie_titles
 
 # URL generation
-base_url = "https://www.themoviedb.org/movie"
-# movie_url =  f'{base_url}/movie'
+base_url = "https://www.themoviedb.org"
+movie_url =  f'{base_url}/movie'
 
 # # Get the page
-# movie_response = requests.get((movie_url), headers=needed_headers)
+movie_response = requests.get((movie_url), headers=needed_headers)
 
 # # Check the first 200 characters
 # first_200_chars = movie_response.text[0:200]

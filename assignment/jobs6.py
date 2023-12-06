@@ -25,17 +25,17 @@ website = """
 #           WEBSITE: INDEED.FR          #
 ######################################### 
 """
-print(website)
-start_time = datetime.now()
-print('Crawl starting time : {}' .format(start_time.time()))
-print()
+# print(website)
+# start_time = datetime.now()
+# print('Crawl starting time : {}' .format(start_time.time()))
+# print()
 
-def generate_url(index):
-    if index == 1:
-        return "https://www.naukri.com/machine-learning-engineer-jobs-in-india"
-    else:
-        return format("https://www.naukri.com/machine-learning-engineer-jobs-in-india-{}".format(index))
-    return url
+# def generate_url(index):
+#     if index == 1:
+#         return "https://www.naukri.com/machine-learning-engineer-jobs-in-india"
+#     else:
+#         return format("https://www.naukri.com/machine-learning-engineer-jobs-in-india-{}".format(index))
+#     return url
 
 def write_file(index, soup):
     file = open("jobs/machine_learning_engineer/page-{}.txt".format(index), "w")
@@ -103,22 +103,22 @@ def parse_job_data_from_soup(page_jobs):
 
         print("***************END***************")
         
-options = webdriver.ChromeOptions() 
-options.headless = True 
-driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+# options = webdriver.ChromeOptions() 
+# options.headless = True 
+# driver=webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-for i in range(72,420):
-    print(i)
-    url = generate_url(i)
-    driver.get(url)
-    sleep(randint(5, 10))
-    get_url = driver.current_url
-    if get_url == url:
-        page_source = driver.page_source
+# for i in range(72,420):
+#     print(i)
+#     url = generate_url(i)
+#     driver.get(url)
+#     sleep(randint(5, 10))
+#     get_url = driver.current_url
+#     if get_url == url:
+#         page_source = driver.page_source
 
-    soup = BeautifulSoup(page_source, 'html.parser')
-    page_jobs = soup.find_all('div', class_="srp-jobtuple-wrapper")
-    write_file(i, page_jobs)
+#     soup = BeautifulSoup(page_source, 'html.parser')
+#     page_jobs = soup.find_all('div', class_="srp-jobtuple-wrapper")
+#     write_file(i, page_jobs)
 # file = open("jobs/MyFile.txt", "r")
 # file.close()
 
